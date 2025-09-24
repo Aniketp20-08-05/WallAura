@@ -1,0 +1,1 @@
+This folder can hold static assets like images or a favicon. Add your wallpaper images here if you prefer local assets over remote URLs.

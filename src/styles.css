@@ -1,0 +1,66 @@
+:root{
+  --bg:#0f1724;
+  --card:#0b1220;
+  --muted:#9aa4b2;
+  --accent:#6ee7b7;
+}
+*{box-sizing:border-box}
+body,html,#root{height:100%;margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial}
+body{background:linear-gradient(180deg,#071029 0%, #0f1724 100%);color:#e6eef6}
+.app{min-height:100vh;display:flex;flex-direction:column}
+.container{max-width:1100px;margin:0 auto;padding:0 1rem;width:100%}
+.header{padding:2rem 0;text-align:center}
+.header-row{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.header h1{margin:0;font-size:1.75rem}
+.header .tag{color:var(--muted);margin:0.25rem 0 0}
+.search input{width:360px;max-width:52vw;padding:0.6rem 1rem;border-radius:10px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02);color:inherit}
+.apikey-form{margin-top:0.75rem;display:flex;justify-content:center;gap:0.5rem;align-items:center}
+.apikey-form input{padding:0.45rem 0.6rem;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02);color:inherit;width:320px}
+.apikey-form button{padding:0.45rem 0.7rem;border-radius:8px;border:none;background:var(--accent);color:#06231a;cursor:pointer}
+main{padding:1rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem}
+.card{background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);border-radius:12px;overflow:hidden;position:relative;border:1px solid rgba(255,255,255,0.04)}
+.card img{width:100%;height:160px;object-fit:cover;display:block}
+.meta{display:flex;align-items:center;justify-content:space-between;padding:0.75rem}
+.meta h3{margin:0;font-size:1rem}
+.meta .author{margin:0;color:var(--muted);font-size:0.85rem}
+.download{background:var(--accent);border:none;padding:0.45rem 0.7rem;border-radius:8px;color:#06231a;cursor:pointer}
+.card{transition:transform .18s ease, box-shadow .18s ease}
+.card:hover{transform:translateY(-6px);box-shadow:0 8px 30px rgba(2,6,23,0.6)}
+.fav{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:0.35rem 0.5rem;border-radius:8px;cursor:pointer}
+.fav.active{background:rgba(110,231,183,0.12);color:var(--accent);border-color:rgba(110,231,183,0.25)}
+
+.fav.like{margin-right:6px}
+.fav.like.liked{background:rgba(255,90,110,0.08);color:#ff5777;border-color:rgba(255,90,110,0.12)}
+
+/* navbar */
+.navbar{display:flex;align-items:center;justify-content:space-between;padding:0.5rem 1rem;background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);border-bottom:1px solid rgba(255,255,255,0.03);margin-bottom:0.75rem}
+.nav-left{display:flex;align-items:center;gap:8px}
+.nav-btn{background:transparent;border:1px solid rgba(255,255,255,0.04);padding:0.35rem 0.6rem;border-radius:8px;cursor:pointer;color:inherit}
+.nav-btn.active{background:rgba(255,255,255,0.02)}
+.nav-right{display:flex;align-items:center;gap:8px}
+.nav-user{color:var(--muted);margin-right:8px}
+
+/* modal */
+.modal{position:fixed;inset:0;background:rgba(2,6,23,0.6);display:flex;align-items:center;justify-content:center}
+.modal-card{background:var(--card);padding:1rem;border-radius:10px;max-width:420px;width:100%;box-shadow:0 8px 30px rgba(2,6,23,0.8)}
+
+/* dropdown */
+.nav-dropdown{position:relative}
+.nav-dropdown .dropdown{position:absolute;left:0;top:calc(100% + 6px);background:var(--card);border:1px solid rgba(255,255,255,0.04);padding:8px;border-radius:8px;display:none;min-width:160px;z-index:40}
+.nav-dropdown:hover .dropdown{display:block}
+.dropdown-item{padding:6px 8px;border-radius:6px;cursor:pointer}
+.dropdown-item:hover{background:rgba(255,255,255,0.02)}
+
+/* skeleton */
+.skeleton{background:linear-gradient(90deg,#0b1220 0%, #111827 50%, #0b1220 100%);height:170px;border-radius:12px;animation:shimmer 1.2s linear infinite;background-size:200% 100%}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+.card.skeleton .s-img{height:120px;background:linear-gradient(180deg,#0c1724,#071021);border-bottom:1px solid rgba(255,255,255,0.03)}
+.s-line{display:block;height:12px;background:rgba(255,255,255,0.03);margin:8px 0;border-radius:6px}
+.s-dot{width:36px;height:28px;background:rgba(255,255,255,0.03);border-radius:6px;border:none}
+.btn{background:transparent;border:1px solid rgba(255,255,255,0.06);color:inherit;padding:0.45rem 0.75rem;border-radius:8px;cursor:pointer}
+.footer{text-align:center;padding:1rem;color:var(--muted);margin-top:auto}
+.empty{color:var(--muted);padding:2rem}
+@media(min-width:800px){
+  .card img{height:140px}
+}
