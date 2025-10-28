@@ -1,5 +1,6 @@
 // Simple Unsplash API wrapper. Uses Vite env var VITE_UNSPLASH_ACCESS_KEY.
-// If no key is provided, callers should fall back to local/sample data.
+// If VITE_USE_SERVER_PROXY === 'true' the client will call the serverless
+// proxy at /api/unsplash which holds a secret UNSPLASH_KEY on the server.
 
 // Read and sanitize the env value: remove surrounding quotes and trim whitespace.
 const rawAccessKey = import.meta.env.VITE_UNSPLASH_ACCESS_KEY
@@ -28,6 +29,7 @@ function maskKey(k) {
   return k.length > 8 ? `${k.slice(0, 4)}...${k.slice(-4)}` : '****'
 }
 const BASE = 'https://api.unsplash.com'
+const USE_SERVER_PROXY = String(import.meta.env.VITE_USE_SERVER_PROXY || '').toLowerCase() === 'true'
 
 async function fetchPhotos({ query, perPage = 20 }) {
   // Treat common placeholder/example values as "no key" so the app falls back
@@ -36,6 +38,32 @@ async function fetchPhotos({ query, perPage = 20 }) {
   if (!key || String(key).toLowerCase().includes('your_') || String(key).toLowerCase().includes('placeholder')) {
     // Signal to caller that no key is present
     throw new Error('NO_UNSPLASH_KEY')
+  }
+
+
+  // If server proxy is enabled, call our serverless endpoint which adds the
+  // secret key on the server side. This avoids exposing your key to every user.
+  if (USE_SERVER_PROXY) {
+    const searchUrl = query
+      ? `/api/unsplash?q=${encodeURIComponent(query)}&per_page=${perPage}`
+      : `/api/unsplash?per_page=${perPage}`
+    const res = await fetch(searchUrl)
+    if (!res.ok) {
+      const text = await res.text().catch(() => '')
+      const err = new Error('Unsplash (server proxy) error: ' + res.status + ' ' + res.statusText)
+      err.detail = text
+      throw err
+    }
+    const payload = await res.json()
+    const results = payload.results || []
+
+    return results.map((p) => ({
+      id: p.id,
+      title: p.title || p.description || p.alt_description || 'Untitled',
+      src: p.src || (p.urls && (p.urls.regular || p.urls.full || p.urls.small)) || p.src,
+      author: p.author || (p.user && (p.user.name || p.user.username)),
+      download: p.download || (p.links && p.links.download) || (p.urls && p.urls.full)
+    }))
   }
 
   const headers = {
@@ -83,6 +111,22 @@ export { fetchPhotos }
 // (or /photos/:id/download) with the app's client id to get a redirected URL to the
 // actual image. Returns the final URL string.
 async function fetchDownloadUrl({ id, download_location }) {
+  // If server proxy enabled, call our serverless endpoint to get the tracked URL
+  if (USE_SERVER_PROXY) {
+    const params = download_location ? `download_location=${encodeURIComponent(download_location)}` : `download_id=${encodeURIComponent(id)}`
+    const res = await fetch(`/api/unsplash?${params}`)
+    if (!res.ok) {
+      const text = await res.text().catch(() => '')
+      const err = new Error('Unsplash (server proxy) download error: ' + res.status + ' ' + res.statusText)
+      err.detail = text
+      throw err
+    }
+    const data = await res.json()
+    if (data && data.url) return data.url
+    // Fallback
+    return download_location || `${BASE}/photos/${id}/download`
+  }
+
   const key = effectiveKey()
   if (!key || String(key).toLowerCase().includes('your_')) {
     throw new Error('NO_UNSPLASH_KEY')
