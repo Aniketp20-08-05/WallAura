@@ -36,10 +36,42 @@ The Download button now attempts to fetch the image as a blob and save it automa
 Enjoy building WallAura!
 
 Deploy to GitHub Pages
-----------------------
-To deploy this site to GitHub Pages from the `main` branch using the included GitHub Actions workflow:
 
 1. Create a repository on GitHub and push this project to the `main` branch.
+
+Deploy to Vercel (recommended)
+------------------------------
+
+To host WallAura where users don't need to paste an Unsplash key, use Vercel and the included serverless proxy:
+
+1. Sign into https://vercel.com and import the GitHub repository `Aniketp20-08-05/WallAura`.
+2. During import set:
+	- Build command: `npm run vercel-build` (or `npm run build`)
+	- Output directory: `dist`
+3. Add the required Environment Variables in the Vercel Project Settings → Environment Variables:
+	- `UNSPLASH_KEY` = <your Unsplash Access Key>  (keep this secret)
+	- `VITE_USE_SERVER_PROXY` = `true`
+
+	Notes:
+	- `UNSPLASH_KEY` is used only on the serverless proxy (kept secret).
+	- `VITE_USE_SERVER_PROXY` must be `true` at build time so the client will call `/api/unsplash` rather than hitting Unsplash directly.
+
+4. Deploy the project. Vercel will build and publish a public URL (e.g. `https://wallaura-<user>.vercel.app`).
+
+Local testing with Vercel CLI:
+
+```powershell
+# install vercel if you don't have it
+# npm i -g vercel
+# login interactively
+# create a local .env file with:
+#   UNSPLASH_KEY=your_key
+#   VITE_USE_SERVER_PROXY=true
+# then run:
+# vercel dev
+```
+
+If you'd like, I can add more advanced protections (short in-memory cache, per-IP rate limiting) to the serverless proxy — this reduces load on Unsplash and protects your quota.
 2. Ensure the repo has a `GITHUB_TOKEN` (provided automatically for Actions).
 3. The workflow in `.github/workflows/deploy-pages.yml` will run on push to `main`, build the Vite app, and publish the `dist/` folder to GitHub Pages.
 4. After the action completes, enable GitHub Pages in your repository settings (the action will publish to the `gh-pages` branch).
