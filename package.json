@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "vercel-build": "npm run build",
     "preview": "vite preview",
     "start:proxy": "node server.js",
     "start:all": "concurrently \"npm run start:proxy\" \"npm run dev\""
